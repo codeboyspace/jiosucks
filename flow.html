@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tamil Nadu Static Map</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #map {
+            height: 80vh; /* Map will take 80% of screen height */
+            width: 100%;
+            margin-top: 20px;
+        }
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 5;
+        }
+        .button {
+            font-size: 24px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #000;
+            margin: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Tamil Nadu Static Map</h1>
+
+    <div id="map"></div>
+
+    <!-- Zoom Controls and Movement -->
+    <div class="controls">
+        <button class="button" id="zoomOut">-</button>
+        <button class="button" id="zoomIn">+</button>
+        <button class="button" id="moveLeft">Left</button>
+        <button class="button" id="moveRight">Right</button>
+    </div>
+
+    <script>
+        let zoomLevel = 7; // Initial zoom level
+        let centerLongitude = 78.6569; // Initial center longitude for Tamil Nadu
+        const tamilNaduCenter = { lat: 11.1276, lng: centerLongitude };
+        const mapElement = document.getElementById('map');
+
+        // Coordinates for five cities in Tamil Nadu
+        const markersData = [
+            { lat: 13.0827, lng: 80.2707, label: "C" },  // Chennai
+            { lat: 12.9716, lng: 79.1581, label: "1" },  // Coimbatore
+            { lat: 10.7905, lng: 78.7047, label: "2" },  // Madurai
+            { lat: 9.9399, lng: 78.1217, label: "3" },   // Tirunelveli
+            { lat: 11.9398, lng: 79.1325, label: "4" },  // Trichy
+        ];
+
+        // Function to update the map
+        function updateMap() {
+            const markers = markersData.map(marker => `&markers=color:red%7Clabel:${marker.label}%7C${marker.lat},${marker.lng}`).join('');
+            const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${tamilNaduCenter.lat},${tamilNaduCenter.lng}&zoom=${zoomLevel}&size=800x800${markers}&key=AIzaSyB5sQgEo5BdIkJTyrebFTXUvd3b7_nN284`;
+            mapElement.innerHTML = `<img src="${mapUrl}" alt="Tamil Nadu Map">`;
+        }
+
+        // Zoom In functionality
+        document.getElementById("zoomIn").addEventListener("click", () => {
+            if (zoomLevel < 20) {
+                zoomLevel++;
+                updateMap();
+            }
+        });
+
+        // Zoom Out functionality
+        document.getElementById("zoomOut").addEventListener("click", () => {
+            if (zoomLevel > 0) {
+                zoomLevel--;
+                updateMap();
+            }
+        });
+
+        // Move map left
+        document.getElementById("moveLeft").addEventListener("click", () => {
+            centerLongitude -= 0.5; // Move 0.5 degree to the left
+            tamilNaduCenter.lng = centerLongitude;
+            updateMap();
+        });
+
+        // Move map right
+        document.getElementById("moveRight").addEventListener("click", () => {
+            centerLongitude += 0.5; // Move 0.5 degree to the right
+            tamilNaduCenter.lng = centerLongitude;
+            updateMap();
+        });
+
+        // Initialize the map
+        updateMap();
+    </script>
+</body>
+</html>
